@@ -1,0 +1,27 @@
+From: University of Pittsburgh <uls-notices@mail.pitt.edu>
+To: <%= $FirstName %> <%= $LastName %> <<%= $Email %>>
+Subject: Item Available Notice from: University Library System
+
+<%= $InstitutionName %>
+<%= $Library %>
+
+Dear <%= $FirstName %>:
+
+The item(s) that you requested are now available at the location(s) shown below.
+
+Please pick up item(s) before the indicated expiration date.
+
+<% foreach my $i (@{$_itemList}) { %>
+Location:       <%= $i->{Library} %>
+Title:          <%= $i->{ItemTitle} %>
+Author:         <%= $i->{ItemAuthor} %>
+Item ID:        <%= $i->{ItemId} %>
+Call #:         <%= $i->{ItemCall} %>
+Expiration Date: <%= $i->{ExpirationDate} %>
+<% } %>
+
+Access to your borrower record is available at http://pittcat.pitt.edu/cgi-bin/Pwebrecon.cgi?DB=local&PAGE=pbLogon
+
+If you have questions or need assistance contact us at:
+        Location: <%= $Library %>
+        Phone:    <%= $LibPhone %>

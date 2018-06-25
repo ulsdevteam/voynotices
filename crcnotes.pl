@@ -19,6 +19,10 @@ use strict;
 
 use List::Util;
 use Mojo::Template;
+use Sys::Hostname;
+use Email::Sender::Simple;
+use Email::MIME;
+use Email::Address::XS;
 
 # hash $variables describes the SIF structure
 my(%variables) = (
@@ -145,23 +149,73 @@ foreach my $d (@data) {
 				# Initialize the template processor
 				my($t) = Mojo::Template->new();
 				$t->vars(1);
-				my($email) = $t->render_file('crcnotes/'.$d->[$nid].'.tmpl', \%msg);
+				my($render) = $t->render_file('crcnotes/'.$d->[$nid].'.tmpl', \%msg);
+				my($failureMessage) = '';
 				# check if the result is email text, or an error object
-				if (!ref($email)) {
+				if (!ref($render)) {
 					# send the email
+					# find the headers and body within the plaintext template
 					my(@headers, $body, @lines);
-					@lines = split(/\n\n/m, $email);
+					# get all groupings of lines
+					@lines = split(/\n\n/m, $render);
+					# the first grouping is the headers
 					@headers = split(/\n/m, $lines[0]);
 					shift(@lines);
+					# the remaining groupings go back together as the body
 					$body = join("\n\n", @lines);
+					# we'll need to parse the headers for Email::Simple
+					my($mailHeader);
 					foreach my $h (@headers) {
-						print $h."\n";
+						# Split the name of the header from the value of the header
+						my(@parts, $headerName, $headerValue);
+						@parts = split(':', $h);
+						# Trim the leading and trailing whitespace from the name and value
+						$headerName = shift(@parts);
+						$headerName =~ s/\s+$//;
+						$headerName =~ s/^\s+//;
+						$headerValue = join(':', @parts);
+						$headerValue =~ s/\s+$//;
+						$headerValue =~ s/^\s+//;
+						# Don't actually send mail if not production
+						if (hostname() !~ m/prod/i && $headerName =~ m/^(to|from|cc|bcc)$/i) {
+							my(@oldAddresses) = Email::Address::XS->parse($headerValue);
+							my(@newAddresses);
+							# replace the domain with mailinator.com or similar
+							foreach my $a (@oldAddresses) {
+								my($new) = $a->address();
+								$new =~ s/@/./;
+								$new .= '@mailinator.com';
+								$a->address( $new );
+								push(@newAddresses, $a);
+							}
+							$headerValue = join(',', @newAddresses);
+						}
+						$mailHeader->{$headerName} = $headerValue;
 					}
-					print "\n";
-					print $body;
-					print "\n\n";
+					foreach my $h (keys(%$mailHeader)) {
+						print $h.': '.$mailHeader->{$h}."\n";
+					}
+					my($email) = Email::MIME::create(
+						'header' => $mailHeader,
+						'parts' => [
+							Email::MIME::create(
+								'body' => $body
+							)
+							# TODO: handle HTML + plaintext?
+						]
+					);
+					my($result) = Email::Sender::Simple->try_to_send($email);
+					if ($result->isa('Email::Sender::Failure')) {
+						# an error occurred
+						$failureMessage = $result->code.' '.$result->message;
+					}
 				} else {
-					warn $email->to_string();
+					# an error occured
+					$failureMessage = $render->to_string();
+				}
+				# Handle a failure condition
+				if ($failureMessage) {
+					warn $failureMessage;
 					# reconstruct original lines for output
 					# for each line
 					foreach my $l (@{$msg{'_itemList'}}) {

@@ -17,13 +17,13 @@ Drop this in an arbitrary directory accessible by the `voyager` user.
 
 ## Configuration
 
-Edit the templates to customize your emails.  Note that the templates are named by notice type (e.g. circnotice type 01 is "circnotice/01.tmpl").
+Edit the templates to customize your emails.  Note that the templates are named by notice type (e.g. crcnotes type 01 is "crcnotes/01.tmpl").
 
 ## Usage
 
 Execute this as the `voyager` user, after the appropriate run of a cronjob created the notice file.  Pipe in the notice file, and write out the results of this application to the new notice file.  E.g.:
 ```
-for n in $RPT_DIR/circnotice.*.inp; do mv $n $n.preprocess; perl circnotice.pl < $n.preprocess > $n; done
+for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl crcnotes.pl < $n.preprocess > $n; done
 ```
 
 ## Author / License

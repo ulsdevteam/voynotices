@@ -145,7 +145,7 @@ foreach my $d (@data) {
 				# Initialize the template processor
 				my($t) = Mojo::Template->new();
 				$t->vars(1);
-				my($email) = $t->render_file('crcnotice/'.$d->[$nid].'.tmpl', \%msg);
+				my($email) = $t->render_file('crcnotes/'.$d->[$nid].'.tmpl', \%msg);
 				# check if the result is email text, or an error object
 				if (!ref($email)) {
 					# send the email
@@ -186,7 +186,7 @@ foreach my $d (@data) {
 		}
 	}
 	# check if we have an email template to process this known notice type
-	if (defined($variables{$d->[$nid]}) && -r 'crcnotice/'.$d->[$nid].'.tmpl' && $d->[$eml]) {
+	if (defined($variables{$d->[$nid]}) && -r 'crcnotes/'.$d->[$nid].'.tmpl' && $d->[$eml]) {
 		# do we have a message in progress for the same user and notice?
 		if (%msg) {
 			# continue prior message

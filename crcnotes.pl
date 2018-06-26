@@ -177,7 +177,7 @@ foreach my $d (@data) {
 						$headerValue =~ s/\s+$//;
 						$headerValue =~ s/^\s+//;
 						# Don't actually send mail if not production
-						if (hostname() !~ m/prod/i && $headerName =~ m/^(to|from|cc|bcc)$/i) {
+						if (hostname() !~ m/prod/i && $headerName =~ m/^(to|cc|bcc)$/i) {
 							my(@oldAddresses) = Email::Address::XS->parse($headerValue);
 							my(@newAddresses);
 							# replace the domain with mailinator.com or similar
@@ -190,17 +190,12 @@ foreach my $d (@data) {
 							}
 							$headerValue = join(',', @newAddresses);
 						}
-						$mailHeader->{$headerName} = $headerValue;
+						push(@$mailHeader, ($headerName => $headerValue));
 					}
-					foreach my $h (keys(%$mailHeader)) {
-						print $h.': '.$mailHeader->{$h}."\n";
-					}
-					my($email) = Email::MIME::create(
-						'header' => $mailHeader,
+					my($email) = Email::MIME->create(
+						'header_str' => $mailHeader,
 						'parts' => [
-							Email::MIME::create(
-								'body' => $body
-							)
+							$body
 							# TODO: handle HTML + plaintext?
 						]
 					);

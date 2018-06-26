@@ -8,16 +8,21 @@ See a comparable process [autocirc from UTSA](https://github.com/cherveny/autoci
 
 * Voyager 9 or later (Voyager 10 tested)
 * Perl 5 or later (Perl 5.24 tested)
-* Mojo::Template module for Perl
+* Perl modules:
+  * Mojo::Template
+  * Email::Sender
+  * Email::MIME
 * Additional coding (currently work-in-progress)
 
 ## Installation
 
 Drop this in an arbitrary directory accessible by the `voyager` user.
 
-## Configuration
+## Configuration / Customization
 
 Edit the templates to customize your emails.  Note that the templates are named by notice type (e.g. crcnotes type 01 is "crcnotes/01.tmpl").
+
+The script uses a regular expression to identify whether the hostname contains the keyword "prod" to enable production email sending.  Otherwise, the script munges the email address.  This will need to be modified to your local hostname configurations and/or local test email domain.
 
 ## Usage
 

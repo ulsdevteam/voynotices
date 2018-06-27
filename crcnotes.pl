@@ -1,6 +1,12 @@
 #!/m1/shared/bin/perl -w
 use strict;
 
+# Copyright (c) University of Pittsburgh
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
 # This script will read in a crcnotices SIF (pipe delimited) from STDIN and pre-process it to STDOUT.
 # If lines within the SIF can be sent via email, these messages will be sent and the lines omitted from the output.
 # If lines cannot be sent via email, these lines will be passed through to output, but will be sorted as a side effect.

@@ -12,6 +12,8 @@ See a comparable process [autocirc from UTSA](https://github.com/cherveny/autoci
   * Mojo::Template
   * Email::Sender
   * Email::MIME
+  * HTML::FormatText or HTML::WikiConverter::Markdown (if using HTML templates for email)
+* UTF-8 based email templates (sorry, too lazy to normalize UTF-8 Voyager data with another encoding)
 * Additional coding (currently work-in-progress)
 
 ## Installation

@@ -30,7 +30,7 @@ The script uses a regular expression to identify whether the hostname contains t
 
 Execute this as the `voyager` user, after the appropriate run of a cronjob created the notice file.  Pipe in the notice file, and write out the results of this application to the new notice file.  E.g.:
 ```
-for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl crcnotes.pl < $n.preprocess > $n; done
+for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl VoyagerCircNotes.pl < $n.preprocess > $n; done
 ```
 
 ## Author / License

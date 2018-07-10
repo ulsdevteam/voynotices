@@ -62,6 +62,9 @@ sub _setupSifFields() {
 			'ItemCall',
 			'Enum'
 		],
+		# Hold/Recall Cancellation
+		'00' => [
+		],
 		# Item Available
 		'01' => [
 			'ExpirationDate'
@@ -145,6 +148,7 @@ sub getFieldNames {
 	if (defined($self->{'_sifFields'}{$noticeId})) {
 		return @{$self->{'_sifFields'}{$noticeId}};
 	} else {
+		warn 'Notice type "'.$noticeId.'" is invalid';
 		return;
 	}
 
@@ -172,7 +176,8 @@ sub readInput {
 	# read from STDIN
 	while ($_ = <>) {
 		chomp $_;
-		push @{$self->{'_data'}}, [split(/[|]/, $_)];
+		# split without limit (-1) to get trailing empty fields
+		push @{$self->{'_data'}}, [split(/[|]/, $_, -1)];
 	}
 }
 
@@ -181,10 +186,12 @@ sub sortBy {
 	my(@fields) = @_;
 
 	my(@data) = sort { 
-		my($aCalc, $bCalc);
+		my($aCalc, $bCalc) = ('', '');
 		foreach my $f (@fields) {
-			$aCalc .= $a->[$self->getFieldPosition($a->[$self->getNoticeIdPosition()], $f)].'~';
-			$bCalc .= $b->[$self->getFieldPosition($b->[$self->getNoticeIdPosition()], $f)].'~';
+			if (defined($self->getFieldPosition($a->[$self->getNoticeIdPosition()], $f)) && defined($self->getFieldPosition($b->[$self->getNoticeIdPosition()], $f))) {
+				$aCalc .= $a->[$self->getFieldPosition($a->[$self->getNoticeIdPosition()], $f)].'~';
+				$bCalc .= $b->[$self->getFieldPosition($b->[$self->getNoticeIdPosition()], $f)].'~';
+			}
 		}
 		$aCalc cmp $bCalc;
 	} @{$self->{'_data'}};
@@ -247,7 +254,11 @@ sub getLinesFromMessage() {
 				$pipe = 1;
 			}
 			# output the field
-			$output .= $l->{$f};
+			if (defined($l->{$f})) {
+				$output .= $l->{$f};
+			} else {
+				warn 'Field '.$f.' not defined for type '.$l->{'NoticeId'};
+			}
 		}
 		# output a newline at the end of the line
 		$output .= "\n";
@@ -349,9 +360,7 @@ foreach my $m ($crcnote->byNoticeAndPatron()) {
 				'header_str' => $mailHeader,
 				'parts' => \@parts,
 			);
-			#my($result) = Email::Sender::Simple->try_to_send($email);
-			my($result) = 0;
-			print $email->as_string();
+			my($result) = Email::Sender::Simple->try_to_send($email);
 			if ($result->isa('Email::Sender::Failure')) {
 				# an error occurred
 				$failureMessage = $result->code.' '.$result->message;

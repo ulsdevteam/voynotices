@@ -71,12 +71,15 @@ foreach my $m ($crcnote->byNoticeAndPatron()) {
 						'charset' => $characterSet,
 					},
 				);
+				my(@moduleErrors);
 				eval 'use HTML::WikiConverter::Markdown';
-				if ($@) {
+				@moduleErrors = $@ if ($@);
+				eval 'use HTML::WikiConverter';
+				@moduleErrors = $@ if ($@);
+				if (@moduleErrors) {
 					use HTML::FormatText;
 					$body = HTML::FormatText->format_string($body);
 				} else {
-					use HTML::WikiConverter;
 					my($converter) = new HTML::WikiConverter('dialect' => 'Markdown');
 					$body = $converter->html2wiki($body);
 				}

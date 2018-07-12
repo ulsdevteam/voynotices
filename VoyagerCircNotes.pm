@@ -75,7 +75,8 @@ sub _setupSifFields() {
 			'Sequence',
 			'ProxyLastName',
 			'ProxyFirstName',
-			'ProxyTitle'
+			'ProxyTitle',
+			'CopyNumber'
 		],
 		# Recall
 		'03' => [

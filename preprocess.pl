@@ -71,14 +71,18 @@ foreach my $m ($crcnote->byNoticeAndPatron()) {
 						'charset' => $characterSet,
 					},
 				);
+				# Markdown will probably give a more readable interpretation, if available
 				my(@moduleErrors);
 				eval 'use HTML::WikiConverter::Markdown';
 				@moduleErrors = $@ if ($@);
 				eval 'use HTML::WikiConverter';
 				@moduleErrors = $@ if ($@);
 				if (@moduleErrors) {
-					use HTML::FormatText;
-					$body = HTML::FormatText->format_string($body);
+					# HTML::FormatText loses all formatting, but is a good fallback
+					eval 'use HTML::FormatText';
+					if (!$@) {
+						$body = HTML::FormatText->format_string($body);
+					}
 				} else {
 					my($converter) = new HTML::WikiConverter('dialect' => 'Markdown');
 					$body = $converter->html2wiki($body);

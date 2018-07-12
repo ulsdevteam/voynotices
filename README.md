@@ -7,6 +7,7 @@ See a comparable process [autocirc from UTSA](https://github.com/cherveny/autoci
 ## Requirements
 
 * Voyager 9 or later (Voyager 10 tested)
+  * Specifically, Voyager crcnotes version "09.1"
 * Perl 5 or later (Perl 5.24 tested)
 * Perl modules:
   * Mojo::Template
@@ -14,7 +15,6 @@ See a comparable process [autocirc from UTSA](https://github.com/cherveny/autoci
   * Email::MIME
   * HTML::FormatText or HTML::WikiConverter::Markdown (if using HTML templates for email)
 * UTF-8 based email templates (sorry, too lazy to normalize UTF-8 Voyager data with another encoding)
-* Additional coding (currently work-in-progress)
 
 ## Installation
 
@@ -30,7 +30,7 @@ The script uses a regular expression to identify whether the hostname contains t
 
 Execute this as the `voyager` user, after the appropriate run of a cronjob created the notice file.  Pipe in the notice file, and write out the results of this application to the new notice file.  E.g.:
 ```
-for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl VoyagerCircNotes.pl < $n.preprocess > $n; done
+for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl preprocess.pl < $n.preprocess > $n; done
 ```
 
 ## Author / License

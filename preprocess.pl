@@ -1,6 +1,8 @@
 #!/m1/shared/bin/perl -w
 use strict;
 
+use FindBin;
+use lib "$FindBin::Bin";
 use VoyagerCircNotes;
 use Mojo::Template;
 use Sys::Hostname;

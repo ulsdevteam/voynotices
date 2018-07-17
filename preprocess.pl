@@ -135,7 +135,7 @@ sub trim {
 
 sub template_filename {
 	my($notice) = shift;
-	return 'crcnotes/'.$notice.'.tmpl';
+	return $FindBin::Bin.'/crcnotes/'.$notice.'.tmpl';
 }
 
 __END__

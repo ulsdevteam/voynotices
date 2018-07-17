@@ -11,7 +11,10 @@ use Email::MIME;
 use Email::Address::XS;
 
 my($crcnote) = new VoyagerCircNotes();
-$crcnote->readInput();
+while ($_ = <>) {
+	print $_ unless ($crcnote->readLine($_));
+}
+
 my($counter) = 0;
 foreach my $m ($crcnote->byNoticeAndPatron()) {
 	my($template_file) = template_filename($m->[0]->{'NoticeId'});

@@ -177,10 +177,25 @@ sub readInput {
 	my($self) = shift;
 
 	# read from STDIN
+	my($success) = 1;
 	while ($_ = <>) {
-		chomp $_;
-		# split without limit (-1) to get trailing empty fields
-		push @{$self->{'_data'}}, [split(/[|]/, $_, -1)];
+		$success = $success & $self->readLine($_);
+	}
+	return $success;
+}
+
+sub readLine {
+	my($self) = shift;
+	my($line) = shift;
+
+	chomp $line;
+	# split without limit (-1) to get trailing empty fields
+	my(@fields) = split(/[|]/, $line, -1);
+	if (defined($self->{'_sifFields'}{@fields[$self->getNoticeIdPosition()]})) {
+		push @{$self->{'_data'}}, \@fields;
+		return 1;
+	} else {
+		return 0;
 	}
 }
 

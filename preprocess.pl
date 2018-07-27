@@ -1,6 +1,33 @@
 #!/m1/shared/bin/perl -w
 use strict;
 
+=head1 NAME
+
+preprocess.pl
+
+This script will send emails for circulation notices.
+
+=head1 USAGE
+
+Read from STDIN, preprocess notice line(s), send emails or write notice line(s) to output if email not sent.
+
+=begin code
+
+for n in $RPT_DIR/crcnotes.*.inp; do mv $n $n.preprocess; perl preprocess.pl < $n.preprocess > $n; done
+
+=end code
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) University of Pittsburgh
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+=cut
+
 use FindBin;
 use lib "$FindBin::Bin";
 use VoyagerCircNotes;

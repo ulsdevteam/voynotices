@@ -398,7 +398,7 @@ List every row from memory as a solitary arrayref.
 sub byRow {
 	my($self) = shift;
 	my(@data, @result);
-	@data = @{$self->{'_data'}};
+	@data = @{$self->{'_data'}} if ($self->{'_data'});
 	my($d);
 	while ($d = shift(@data)) {
 		push(@result, [$self->_dataToHashRef($d)]);

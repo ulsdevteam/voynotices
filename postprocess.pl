@@ -51,7 +51,7 @@ if ($email) {
 }
 die 'The recipient email(s) must be provided as the first parameter' unless (@emails);
 $email = join(', ', @emails);
-my($template_file) = 'finefee.tmpl';
+my($template_file) = $FindBin::Bin.'/finefee.tmpl';
 die 'The file '.$template_file.' is missing' unless (-r $template_file);
 
 my($crcnote) = new VoyagerCircNotes();

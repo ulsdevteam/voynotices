@@ -4,7 +4,11 @@ Subject: Fine/Fee Notices
 
 A tab-delimited file representing the current fine/fee notices recently processed is attached to this message.
 
-Each line represents a line from the circulation notices file.
+Each line in the file represents a line from the circulation notices file.
+
+The input file(s) processed included fines/fees from the following locations:
+<% foreach my $i (@$libraries) { %>
+  <%= $i %>
+<% } %>
 
 ULS - Voyager Administrators
-(this is a test)

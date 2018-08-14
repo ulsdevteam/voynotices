@@ -62,9 +62,11 @@ while ($_ = <>) {
 my($counter) = 0;
 my($csv) = '';
 my(@csvFields) = ('LastName', 'FirstName', 'Email', 'ItemTitle', 'ItemId', 'FineFeeDate', 'FineFeeAmount', 'FineFeeBalance', 'PreviouslyBilled', 'TotalFinesFees');
+my(%libraries);
 foreach my $m ($crcnote->byRow()) {
 	# for each fine-fee notice
 	if ($m->[0]->{'NoticeId'} eq '05') {
+		$libraries{$m->[0]->{'Library'}} = 1;
 		for my $f (@csvFields) {
 			$csv .= quote_csv($m->[0]->{$f}).($f eq $csvFields[$#csvFields] ? "\n" : ',');
 		}
@@ -79,7 +81,7 @@ if ($csv) {
 	$csv = $csvHeader.$csv;
 	my($t) = Mojo::Template->new();
 	$t->vars(1);
-	my($render) = $t->render_file($template_file, { 'email' => $email } );
+	my($render) = $t->render_file($template_file, { 'email' => $email, 'libraries' => [keys(%libraries)] } );
 	# check if the result is email text, or an error object
 	if (!ref($render)) {
 		# send the email
